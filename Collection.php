@@ -53,7 +53,13 @@
             if ( !array_key_exists( 'links', $this->data ) ) {
                 $this->data['links'] = array();
             }
-            $this->data['links'][] = $link;
+
+            if ( !in_array( $link, $this->data['links'] ) ) {
+                $this->data['links'][] = $link;
+            }
+            else {
+                throw new DuplicateObjectException( 'Attempted to add duplicate Link to Item' );
+            }
             return $this;
         }
 
