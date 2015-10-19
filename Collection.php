@@ -58,7 +58,7 @@
                 $this->data['links'][] = $link;
             }
             else {
-                throw new DuplicateObjectException( 'Attempted to add duplicate Link to Item' );
+                throw new DuplicateObjectException( 'Attempted to add duplicate Link to Collection' );
             }
             return $this;
         }
