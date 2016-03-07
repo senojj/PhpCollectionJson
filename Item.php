@@ -1,109 +1,94 @@
-<?php namespace PhpCollectionJson;
+<?php
 
-    class Item extends CollectionJsonObject {
+namespace PhpCollectionJson;
 
-        function __construct ( $href ) {
-            $this->data['href'] = $href;
+class Item extends CollectionJsonObject
+{
+    public function __construct($href)
+    {
+        parent::__construct(
+            'href',
+            'data',
+            'links'
+        );
+        $this->href = $href;
+    }
 
-            parent::__construct(
-                'href',
-                'data',
-                'links'
-            );
-        }
+    public function __set($name, $value)
+    {
+        $this->verifyProperty($name);
 
-        function __set ( $name, $value ) {
-            $this->verifyProperty( $name );
-
-            switch ( $name ) {
-                case 'href':
-                    $this->data[$name] = $value;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        function __get ( $name ) {
-            $this->verifyProperty( $name );
-
-            if ( array_key_exists( $name, $this->data ) ) {
-                return $this->data[$name];
-            }
-            else {
-                return null;
-            }
-        }
-
-        function __isset( $name ) {
-            return isset( $this->data[$name] );
-        }
-
-        public function addLink ( Link $link ) {
-
-            if ( !array_key_exists( 'links', $this->data ) ) {
-                $this->data['links'] = array();
-            }
-
-            if ( !in_array( $link, $this->data['links'] ) ) {
-                $this->data['links'][] = $link;
-            }
-            else {
-                throw new DuplicateObjectException( 'Attempted to add duplicate Link to Item' );
-            }
-            return $this;
-        }
-
-        public function removeLink ( Link $link ) {
-
-            if ( !array_key_exists( 'links', $this->data ) ) {
-                return;
-            }
-
-            for ( $i = 0; $i < count( $this->data['links'] ); $i++ ) {
-
-                if ( $link == $this->data['links'][$i] ) {
-                    unset( $this->data['links'][$i] );
-                }
-            }
-
-            if ( !count( $this->data['links'] ) ) {
-                unset( $this->data['links'] );
-            }
-        }
-
-        public function addData ( Data $data ) {
-
-            if ( !array_key_exists( 'data', $this->data ) ) {
-                $this->data['data'] = array();
-            }
-
-            if ( !in_array( $data, $this->data['data'] ) ) {
-                $this->data['data'][] = $data;
-            }
-            else {
-                throw new DuplicateObjectException( 'Attempted to add duplicate Data to Item' );
-            }
-            return $this;
-        }
-
-        public function removeData ( Data $data ) {
-
-            if ( !array_key_exists( 'data', $this->data ) ) {
-                return;
-            }
-
-            for ( $i = 0; $i < count( $this->data['data'] ); $i++ ) {
-
-                if ( $data == $this->data['data'][$i] ) {
-                    unset( $this->data['data'][$i] );
-                }
-            }
-
-            if ( !count( $this->data['data'] ) ) {
-                unset( $this->data['data'] );
-            }
+        switch ($name) {
+            case 'href':
+                $this->data[$name] = $value;
+                break;
+            default:
+                break;
         }
     }
 
-?>
+    public function addLink(Link $link)
+    {
+        if (!array_key_exists('links', $this->data)) {
+            $this->data['links'] = array();
+        }
+
+        if (!in_array($link, $this->data['links'])) {
+            $this->data['links'][] = $link;
+        } else {
+            throw new DuplicateObjectException('Attempted to add duplicate Link to Item');
+        }
+
+        return $this;
+    }
+
+    public function removeLink(Link $link)
+    {
+        if (!array_key_exists('links', $this->data)) {
+            return;
+        }
+
+        for ($i = 0; $i < count($this->data['links']); ++$i) {
+            if ($link == $this->data['links'][$i]) {
+                unset($this->data['links'][$i]);
+            }
+        }
+
+        if (!count($this->data['links'])) {
+            unset($this->data['links']);
+        }
+    }
+
+    public function addData(Data $data)
+    {
+        if (!array_key_exists('data', $this->data)) {
+            $this->data['data'] = array();
+        }
+
+        for ($i = 0; $i < count($this->data['data']); ++$i) {
+            if ($this->data['data'][$i]->name === $data->name) {
+                unset($this->data['data'][$i]);
+            }
+        }
+        $this->data['data'][] = $data;
+
+        return $this;
+    }
+
+    public function removeData($name)
+    {
+        if (!array_key_exists('data', $this->data)) {
+            return false;
+        }
+
+        for ($i = 0; $i < count($this->data['data']); ++$i) {
+            if ($data->name === $this->data['data'][$i]->name) {
+                unset($this->data['data'][$i]);
+            }
+        }
+
+        if (!count($this->data['data'])) {
+            unset($this->data['data']);
+        }
+    }
+}

@@ -1,9 +1,11 @@
-<?php namespace PhpCollectionJson;
+<?php
 
-    class DuplicateObjectException extends \Exception {
+namespace PhpCollectionJson;
 
-        function __construct ( $message = '', \Exception $previous = null ) {
-            parent::__construct( $message, 808, $previous );
-        }
+class DuplicateObjectException extends \Exception
+{
+    public function __construct($message = '', \Exception $previous = null)
+    {
+        parent::__construct($message, 808, $previous);
     }
-?>
+}

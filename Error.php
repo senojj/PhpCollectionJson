@@ -1,35 +1,15 @@
-<?php namespace PhpCollectionJson;
+<?php
 
-    class Error extends CollectionJsonObject {
+namespace PhpCollectionJson;
 
-        function __construct () {
-
-            parent::__construct(
-                'title',
-                'code',
-                'message'
-            );
-        }
-
-        function __set ( $name, $value ) {
-            $this->verifyProperty( $name );
-            $this->data[$name] = $value;
-        }
-
-        function __get ( $name ) {
-            $this->verifyProperty( $name );
-
-            if ( array_key_exists( $name, $this->data ) ) {
-                return $this->data[$name];
-            }
-            else {
-                return null;
-            }
-        }
-
-        function __isset( $name ) {
-            return isset( $this->data[$name] );
-        }
+class Error extends CollectionJsonObject
+{
+    public function __construct()
+    {
+        parent::__construct(
+            'title',
+            'code',
+            'message'
+        );
     }
-
-?>
+}
