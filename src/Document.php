@@ -2,10 +2,8 @@
 
 namespace PhpCollectionJson;
 
-class Document implements \JsonSerializable
+class Document extends CollectionJsonObject
 {
-    private $data = array();
-
     public function setCollection(Collection $collection)
     {
         $this->data = array('collection' => $collection);
@@ -66,10 +64,5 @@ class Document implements \JsonSerializable
         if (!count($this->data['queries'])) {
             unset($this->data['queries']);
         }
-    }
-
-    public function jsonSerialize()
-    {
-        return (object) $this->data;
     }
 }

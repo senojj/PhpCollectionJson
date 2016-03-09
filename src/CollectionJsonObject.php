@@ -27,12 +27,16 @@ abstract class CollectionJsonObject implements \JsonSerializable
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
         } else {
-            return;
+            return null;
         }
     }
 
     public function __isset($name)
     {
+        if (!in_array($name, $this->validProperties)) {
+            return false;
+        }
+
         return isset($this->data[$name]);
     }
 
@@ -46,5 +50,10 @@ abstract class CollectionJsonObject implements \JsonSerializable
     public function jsonSerialize()
     {
         return (object) $this->data;
+    }
+
+    public function __toString()
+    {
+        return json_encode($this);
     }
 }
