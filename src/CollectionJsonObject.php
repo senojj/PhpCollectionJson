@@ -14,12 +14,20 @@ abstract class CollectionJsonObject implements \JsonSerializable
         }
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
         $this->verifyProperty($name);
         $this->data[$name] = $value;
     }
 
+    /**
+     * @param $name
+     * @return null
+     */
     public function __get($name)
     {
         $this->verifyProperty($name);
@@ -31,6 +39,10 @@ abstract class CollectionJsonObject implements \JsonSerializable
         }
     }
 
+    /**
+     * @param $name
+     * @return bool
+     */
     public function __isset($name)
     {
         if (!in_array($name, $this->validProperties)) {
@@ -40,6 +52,9 @@ abstract class CollectionJsonObject implements \JsonSerializable
         return isset($this->data[$name]);
     }
 
+    /**
+     * @param $name
+     */
     protected function verifyProperty($name)
     {
         if (!in_array($name, $this->validProperties)) {

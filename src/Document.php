@@ -4,6 +4,9 @@ namespace PhpCollectionJson;
 
 class Document extends CollectionJsonObject
 {
+    /**
+     * @param Collection $collection
+     */
     public function setCollection(Collection $collection)
     {
         $this->data = array('collection' => $collection);
@@ -14,6 +17,9 @@ class Document extends CollectionJsonObject
         unset($this->data['collection']);
     }
 
+    /**
+     * @param Error $error
+     */
     public function setError(Error $error)
     {
         $this->data = array('error' => $error);
@@ -24,6 +30,9 @@ class Document extends CollectionJsonObject
         unset($this->data['error']);
     }
 
+    /**
+     * @param Template $template
+     */
     public function setTemplate(Template $template)
     {
         $this->data = array('template' => $template);
@@ -34,6 +43,11 @@ class Document extends CollectionJsonObject
         unset($this->data['template']);
     }
 
+    /**
+     * @param Query $query
+     * @return $this
+     * @throws DuplicateObjectException
+     */
     public function addQuery(Query $query)
     {
         if (!array_key_exists('queries', $this->data)) {
@@ -49,20 +63,30 @@ class Document extends CollectionJsonObject
         return $this;
     }
 
+    /**
+     * @param Query $query
+     * @return bool
+     */
     public function removeQuery(Query $query)
     {
         if (!array_key_exists('queries', $this->data)) {
-            return;
+            return false;
         }
 
+        $found = false;
+
         for ($i = 0; $i < count($this->data['queries']); ++$i) {
+
             if ($query == $this->data['queries'][$i]) {
                 unset($this->data['queries'][$i]);
+                $found = true;
             }
         }
 
         if (!count($this->data['queries'])) {
             unset($this->data['queries']);
         }
+
+        return $found;
     }
 }

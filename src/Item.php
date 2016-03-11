@@ -4,6 +4,10 @@ namespace PhpCollectionJson;
 
 class Item extends CollectionJsonObject
 {
+    /**
+     * Item constructor.
+     * @param $href
+     */
     public function __construct($href)
     {
         parent::__construct(
@@ -14,6 +18,10 @@ class Item extends CollectionJsonObject
         $this->href = $href;
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
         $this->verifyProperty($name);
@@ -27,6 +35,11 @@ class Item extends CollectionJsonObject
         }
     }
 
+    /**
+     * @param Link $link
+     * @return $this
+     * @throws DuplicateObjectException
+     */
     public function addLink(Link $link)
     {
         if (!array_key_exists('links', $this->data)) {
@@ -42,23 +55,37 @@ class Item extends CollectionJsonObject
         return $this;
     }
 
+    /**
+     * @param Link $link
+     * @return bool
+     */
     public function removeLink(Link $link)
     {
         if (!array_key_exists('links', $this->data)) {
-            return;
+            return false;
         }
 
+        $found = false;
+
         for ($i = 0; $i < count($this->data['links']); ++$i) {
+
             if ($link == $this->data['links'][$i]) {
                 unset($this->data['links'][$i]);
+                $found = true;
             }
         }
 
         if (!count($this->data['links'])) {
             unset($this->data['links']);
         }
+
+        return $found;
     }
 
+    /**
+     * @param Data $data
+     * @return $this
+     */
     public function addData(Data $data)
     {
         if (!array_key_exists('data', $this->data)) {
@@ -75,20 +102,30 @@ class Item extends CollectionJsonObject
         return $this;
     }
 
+    /**
+     * @param $name
+     * @return bool
+     */
     public function removeData($name)
     {
         if (!array_key_exists('data', $this->data)) {
             return false;
         }
 
+        $found = false;
+
         for ($i = 0; $i < count($this->data['data']); ++$i) {
-            if ($data->name === $this->data['data'][$i]->name) {
+
+            if ($name === $this->data['data'][$i]->name) {
                 unset($this->data['data'][$i]);
+                $found = true;
             }
         }
 
         if (!count($this->data['data'])) {
             unset($this->data['data']);
         }
+
+        return $found;
     }
 }

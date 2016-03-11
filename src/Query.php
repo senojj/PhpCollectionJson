@@ -4,6 +4,11 @@ namespace PhpCollectionJson;
 
 class Query extends CollectionJsonObject
 {
+    /**
+     * Query constructor.
+     * @param $href
+     * @param $rel
+     */
     public function __construct($href, $rel)
     {
         parent::__construct(
@@ -17,6 +22,10 @@ class Query extends CollectionJsonObject
         $this->rel = $rel;
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
         $this->verifyProperty($name);
@@ -39,6 +48,11 @@ class Query extends CollectionJsonObject
         }
     }
 
+    /**
+     * @param Data $data
+     * @return $this
+     * @throws DuplicateObjectException
+     */
     public function addData(Data $data)
     {
         if (!array_key_exists('data', $this->data)) {
@@ -54,20 +68,30 @@ class Query extends CollectionJsonObject
         return $this;
     }
 
+    /**
+     * @param Data $data
+     * @return bool
+     */
     public function removeData(Data $data)
     {
         if (!array_key_exists('data', $this->data)) {
-            return;
+            return false;
         }
 
+        $found = false;
+
         for ($i = 0; $i < count($this->data['data']); ++$i) {
+
             if ($data == $this->data['data'][$i]) {
                 unset($this->data['data'][$i]);
+                $found = true;
             }
         }
 
         if (!count($this->data['data'])) {
             unset($this->data['data']);
         }
+
+        return $found;
     }
 }

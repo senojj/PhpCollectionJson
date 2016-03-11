@@ -4,6 +4,10 @@ namespace PhpCollectionJson;
 
 class Collection extends CollectionJsonObject
 {
+    /**
+     * Collection constructor.
+     * @param $href
+     */
     public function __construct($href)
     {
         parent::__construct(
@@ -21,6 +25,10 @@ class Collection extends CollectionJsonObject
         $this->data['items'] = array();
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
         $this->verifyProperty($name);
@@ -37,6 +45,11 @@ class Collection extends CollectionJsonObject
         }
     }
 
+    /**
+     * @param Link $link
+     * @return $this
+     * @throws DuplicateObjectException
+     */
     public function addLink(Link $link)
     {
         if (!array_key_exists('links', $this->data)) {
@@ -52,23 +65,38 @@ class Collection extends CollectionJsonObject
         return $this;
     }
 
+    /**
+     * @param Link $link
+     * @return bool
+     */
     public function removeLink(Link $link)
     {
         if (!array_key_exists('links', $this->data)) {
-            return;
+            return false;
         }
 
+        $found = false;
+
         for ($i = 0; $i < count($this->data['links']); ++$i) {
+
             if ($link == $this->data['links'][$i]) {
                 unset($this->data['links'][$i]);
+                $found = true;
             }
         }
 
         if (!count($this->data['links'])) {
             unset($this->data['links']);
         }
+
+        return $found;
     }
 
+    /**
+     * @param Item $item
+     * @return $this
+     * @throws DuplicateObjectException
+     */
     public function addItem(Item $item)
     {
         if (!array_key_exists('items', $this->data)) {
@@ -84,23 +112,36 @@ class Collection extends CollectionJsonObject
         return $this;
     }
 
+    /**
+     * @param Item $item
+     * @return bool
+     */
     public function removeItem(Item $item)
     {
         if (!array_key_exists('items', $this->data)) {
-            return;
+            return false;
         }
 
+        $found = true;
+
         for ($i = 0; $i < count($this->data['items']); ++$i) {
+
             if ($item == $this->data['items'][$i]) {
                 unset($this->data['items'][$i]);
+                $found = true;
             }
         }
 
         if (!count($this->data['items'])) {
             unset($this->data['items']);
         }
+
+        return $found;
     }
 
+    /**
+     * @param Error $error
+     */
     public function setError(Error $error)
     {
         $this->data['error'] = $error;
@@ -111,6 +152,9 @@ class Collection extends CollectionJsonObject
         unset($this->data['error']);
     }
 
+    /**
+     * @param Template $template
+     */
     public function setTemplate(Template $template)
     {
         $this->data['template'] = $template;
@@ -121,6 +165,11 @@ class Collection extends CollectionJsonObject
         unset($this->data['template']);
     }
 
+    /**
+     * @param Query $query
+     * @return $this
+     * @throws DuplicateObjectException
+     */
     public function addQuery(Query $query)
     {
         if (!array_key_exists('queries', $this->data)) {
@@ -136,23 +185,36 @@ class Collection extends CollectionJsonObject
         return $this;
     }
 
+    /**
+     * @param Query $query
+     * @return bool
+     */
     public function removeQuery(Query $query)
     {
         if (!array_key_exists('queries', $this->data)) {
-            return;
+            return false;
         }
 
+        $found = false;
+
         for ($i = 0; $i < count($this->data['queries']); ++$i) {
+
             if ($query == $this->data['queries'][$i]) {
                 unset($this->data['queries'][$i]);
+                $found = true;
             }
         }
 
         if (!count($this->data['queries'])) {
             unset($this->data['queries']);
         }
+
+        return $found;
     }
 
+    /**
+     * @param Paging $paging
+     */
     public function setPaging(Paging $paging)
     {
         $this->data['paging'] = $paging;
