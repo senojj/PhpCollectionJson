@@ -56,6 +56,7 @@ class Template extends CollectionJsonObject
             
             if ($this->data['data'][$i]->name === $data->name) {
                 unset($this->data['data'][$i]);
+                $this->data['data'] = array_values($this->data['data']);
             }
         }
         $this->data['data'][] = $data;
@@ -79,6 +80,7 @@ class Template extends CollectionJsonObject
 
             if ($name === $this->data['data'][$i]->name) {
                 unset($this->data['data'][$i]);
+                $this->data['data'] = array_values($this->data['data']);
                 $found = true;
             }
         }

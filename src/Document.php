@@ -79,6 +79,7 @@ class Document extends CollectionJsonObject
 
             if ($query == $this->data['queries'][$i]) {
                 unset($this->data['queries'][$i]);
+                $this->data['queries'] = array_values($this->data['queries']);
                 $found = true;
             }
         }

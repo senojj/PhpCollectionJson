@@ -81,6 +81,7 @@ class Collection extends CollectionJsonObject
 
             if ($link == $this->data['links'][$i]) {
                 unset($this->data['links'][$i]);
+                $this->data['links'] = array_values($this->data['links']);
                 $found = true;
             }
         }
@@ -128,6 +129,7 @@ class Collection extends CollectionJsonObject
 
             if ($item == $this->data['items'][$i]) {
                 unset($this->data['items'][$i]);
+                $this->data['items'] = array_values($this->data['items']);
                 $found = true;
             }
         }
@@ -201,6 +203,7 @@ class Collection extends CollectionJsonObject
 
             if ($query == $this->data['queries'][$i]) {
                 unset($this->data['queries'][$i]);
+                $this->data['queries'] = array_values($this->data['queries']);
                 $found = true;
             }
         }

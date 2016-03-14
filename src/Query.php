@@ -84,6 +84,7 @@ class Query extends CollectionJsonObject
 
             if ($data == $this->data['data'][$i]) {
                 unset($this->data['data'][$i]);
+                $this->data['data'] = array_values($this->data['data']);
                 $found = true;
             }
         }
