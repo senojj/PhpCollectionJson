@@ -4,8 +4,8 @@ namespace PhpCollectionJson;
 
 abstract class CollectionJsonObject implements \JsonSerializable
 {
-    protected $data = array();
-    private $validProperties = array();
+    protected $data = [];
+    private $validProperties = [];
 
     public function __construct()
     {

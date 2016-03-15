@@ -56,7 +56,7 @@ class Query extends CollectionJsonObject
     public function addData(Data $data)
     {
         if (!array_key_exists('data', $this->data)) {
-            $this->data['data'] = array();
+            $this->data['data'] = [];
         }
 
         if (!in_array($data, $this->data['data'])) {

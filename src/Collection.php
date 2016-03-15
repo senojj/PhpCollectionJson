@@ -22,7 +22,7 @@ class Collection extends CollectionJsonObject
         );
         $this->version = '1.0';
         $this->href = $href;
-        $this->data['items'] = array();
+        $this->data['items'] = [];
     }
 
     /**
@@ -53,7 +53,7 @@ class Collection extends CollectionJsonObject
     public function addLink(Link $link)
     {
         if (!array_key_exists('links', $this->data)) {
-            $this->data['links'] = array();
+            $this->data['links'] = [];
         }
 
         if (!in_array($link, $this->data['links'])) {
@@ -101,7 +101,7 @@ class Collection extends CollectionJsonObject
     public function addItem(Item $item)
     {
         if (!array_key_exists('items', $this->data)) {
-            $this->data['items'] = array();
+            $this->data['items'] = [];
         }
 
         if (!in_array($item, $this->data['items'])) {
@@ -175,7 +175,7 @@ class Collection extends CollectionJsonObject
     public function addQuery(Query $query)
     {
         if (!array_key_exists('queries', $this->data)) {
-            $this->data['queries'] = array();
+            $this->data['queries'] = [];
         }
 
         if (!in_array($query, $this->data['queries'])) {

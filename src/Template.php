@@ -49,7 +49,7 @@ class Template extends CollectionJsonObject
     public function addData(Data $data)
     {
         if (!array_key_exists('data', $this->data)) {
-            $this->data['data'] = array();
+            $this->data['data'] = [];
         }
 
         for ($i = 0; $i < count($this->data['data']); ++$i) {

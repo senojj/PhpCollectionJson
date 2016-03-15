@@ -9,7 +9,7 @@ class Document extends CollectionJsonObject
      */
     public function setCollection(Collection $collection)
     {
-        $this->data = array('collection' => $collection);
+        $this->data = ['collection' => $collection];
     }
 
     public function unsetCollection()
@@ -22,7 +22,7 @@ class Document extends CollectionJsonObject
      */
     public function setError(Error $error)
     {
-        $this->data = array('error' => $error);
+        $this->data = ['error' => $error];
     }
 
     public function unsetError()
@@ -35,7 +35,7 @@ class Document extends CollectionJsonObject
      */
     public function setTemplate(Template $template)
     {
-        $this->data = array('template' => $template);
+        $this->data = ['template' => $template];
     }
 
     public function unsetTemplate()
@@ -51,7 +51,7 @@ class Document extends CollectionJsonObject
     public function addQuery(Query $query)
     {
         if (!array_key_exists('queries', $this->data)) {
-            $this->data['queries'] = array();
+            $this->data['queries'] = [];
         }
 
         if (!in_array($query, $this->data['queries'])) {

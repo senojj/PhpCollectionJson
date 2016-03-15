@@ -43,7 +43,7 @@ class Item extends CollectionJsonObject
     public function addLink(Link $link)
     {
         if (!array_key_exists('links', $this->data)) {
-            $this->data['links'] = array();
+            $this->data['links'] = [];
         }
 
         if (!in_array($link, $this->data['links'])) {
@@ -90,7 +90,7 @@ class Item extends CollectionJsonObject
     public function addData(Data $data)
     {
         if (!array_key_exists('data', $this->data)) {
-            $this->data['data'] = array();
+            $this->data['data'] = [];
         }
 
         for ($i = 0; $i < count($this->data['data']); ++$i) {
