@@ -1,0 +1,17 @@
+{
+  "name": "jjware/phpcollectionjson",
+  "description": "PHP classes for building a Collection+JSON response",
+  "keywords": ["library", "collections", "json", "collectionjson"],
+  "type": "library",
+  "license": "MIT",
+  "authors": [{
+    "name": "Joshua Jones",
+    "email": "joshua.jones.software@gmail.com"
+  }],
+  "autoload": {
+    "psr-4": {"PhpCollectionJson\\": "src"}
+  },
+  "require": {
+    "php": ">=5.5.0"
+  }
+}
