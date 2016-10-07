@@ -2,97 +2,127 @@
 
 namespace PhpCollectionJson;
 
-class Query extends CollectionJsonObject
+use PhpCollectionJson\Groups\DataGroup;
+
+class Query implements \JsonSerializable
 {
+    private $href;
+    private $rel;
+    private $name;
+    private $prompt;
+    private $data;
+
     /**
      * Query constructor.
-     * @param $href
-     * @param $rel
+     * @param string $href
+     * @param string $rel
+     * @param string $name
+     * @param string $prompt
      */
-    public function __construct($href, $rel)
+    public function __construct($href, $rel, $name = '', $prompt = '')
     {
-        parent::__construct(
-            'href',
-            'rel',
-            'name',
-            'prompt',
-            'data'
-        );
         $this->href = $href;
+        $this->rel = $rel;
+        $this->name = $name;
+        $this->prompt = $prompt;
+        $this->data = new DataGroup();
+    }
+
+    /**
+     * @return string
+     */
+    public function getHref()
+    {
+        return $this->href;
+    }
+
+    /**
+     * @param string $href
+     */
+    public function setHref($href)
+    {
+        $this->href = $href;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRel()
+    {
+        return $this->rel;
+    }
+
+    /**
+     * @param string $rel
+     */
+    public function setRel($rel)
+    {
         $this->rel = $rel;
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @return string
      */
-    public function __set($name, $value)
+    public function getName()
     {
-        $this->verifyProperty($name);
-
-        switch ($name) {
-            case 'href':
-                $this->data[$name] = $value;
-                break;
-            case 'rel':
-                $this->data[$name] = $value;
-                break;
-            case 'name':
-                $this->data[$name] = $value;
-                break;
-            case 'prompt':
-                $this->data[$name] = $value;
-                break;
-            default:
-                break;
-        }
+        return $this->name;
     }
 
     /**
-     * @param Data $data
-     * @return $this
-     * @throws DuplicateObjectException
+     * @param string $name
      */
-    public function addData(Data $data)
+    public function setName($name)
     {
-        if (!array_key_exists('data', $this->data)) {
-            $this->data['data'] = [];
-        }
-
-        if (!in_array($data, $this->data['data'])) {
-            $this->data['data'][] = $data;
-        } else {
-            throw new DuplicateObjectException('Attempted to add duplicate Data to Query');
-        }
-
-        return $this;
+        $this->name = $name;
     }
 
     /**
-     * @param Data $data
-     * @return bool
+     * @return string
      */
-    public function removeData(Data $data)
+    public function getPrompt()
     {
-        if (!array_key_exists('data', $this->data)) {
-            return false;
+        return $this->prompt;
+    }
+
+    /**
+     * @param string $prompt
+     */
+    public function setPrompt($prompt)
+    {
+        $this->prompt = $prompt;
+    }
+
+    /**
+     * @return DataGroup
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    public function jsonSerialize()
+    {
+        $object = new \stdClass();
+        $object->href = $this->href;
+        $object->rel = $this->rel;
+
+        if (!is_null($this->name) && strlen(trim($this->name)) > 0) {
+            $object->name = $this->name;
         }
 
-        $found = false;
-
-        for ($i = 0; $i < count($this->data['data']); ++$i) {
-
-            if ($data == $this->data['data'][$i]) {
-                unset($this->data['data'][$i]);
-                $this->data['data'] = array_values($this->data['data']);
-                $found = true;
-            }
+        if (!is_null($this->prompt) && strlen(trim($this->prompt)) > 0) {
+            $object->prompt = $this->prompt;
         }
 
-        if (!count($this->data['data'])) {
-            unset($this->data['data']);
+        if ($this->data->count() > 0) {
+            $object->data = $this->data;
         }
 
-        return $found;
+        return $object;
+    }
+
+    public function __toString()
+    {
+        return json_encode($this);
     }
 }

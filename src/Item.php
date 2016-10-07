@@ -2,134 +2,76 @@
 
 namespace PhpCollectionJson;
 
-class Item extends CollectionJsonObject
+use PhpCollectionJson\Groups\DataGroup;
+use PhpCollectionJson\Groups\LinkGroup;
+
+class Item implements \JsonSerializable
 {
+    private $href;
+    private $data;
+    private $links;
+
     /**
      * Item constructor.
-     * @param $href
+     * @param string $href
      */
     public function __construct($href)
     {
-        parent::__construct(
-            'href',
-            'data',
-            'links'
-        );
+        $this->href = $href;
+        $this->data = new DataGroup();
+        $this->links = new LinkGroup();
+    }
+
+    /**
+     * @return string
+     */
+    public function getHref()
+    {
+        return $this->href;
+    }
+
+    /**
+     * @param string $href
+     */
+    public function setHref($href)
+    {
         $this->href = $href;
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @return DataGroup
      */
-    public function __set($name, $value)
+    public function getData()
     {
-        $this->verifyProperty($name);
-
-        switch ($name) {
-            case 'href':
-                $this->data[$name] = $value;
-                break;
-            default:
-                break;
-        }
+        return $this->data;
     }
 
     /**
-     * @param Link $link
-     * @return $this
-     * @throws DuplicateObjectException
+     * @return LinkGroup
      */
-    public function addLink(Link $link)
+    public function getLinks()
     {
-        if (!array_key_exists('links', $this->data)) {
-            $this->data['links'] = [];
-        }
-
-        if (!in_array($link, $this->data['links'])) {
-            $this->data['links'][] = $link;
-        } else {
-            throw new DuplicateObjectException('Attempted to add duplicate Link to Item');
-        }
-
-        return $this;
+        return $this->links;
     }
 
-    /**
-     * @param Link $link
-     * @return bool
-     */
-    public function removeLink(Link $link)
+    public function jsonSerialize()
     {
-        if (!array_key_exists('links', $this->data)) {
-            return false;
+        $object = new \stdClass();
+        $object->href = $this->href;
+
+        if ($this->data->count() > 0) {
+            $object->data = $this->data;
         }
 
-        $found = false;
-
-        for ($i = 0; $i < count($this->data['links']); ++$i) {
-
-            if ($link == $this->data['links'][$i]) {
-                unset($this->data['links'][$i]);
-                $this->data['links'] = array_values($this->data['links']);
-                $found = true;
-            }
+        if ($this->links->count() > 0) {
+            $object->links = $this->links;
         }
 
-        if (!count($this->data['links'])) {
-            unset($this->data['links']);
-        }
-
-        return $found;
+        return $object;
     }
 
-    /**
-     * @param Data $data
-     * @return $this
-     */
-    public function addData(Data $data)
+    public function __toString()
     {
-        if (!array_key_exists('data', $this->data)) {
-            $this->data['data'] = [];
-        }
-
-        for ($i = 0; $i < count($this->data['data']); ++$i) {
-
-            if ($this->data['data'][$i]->name === $data->name) {
-                unset($this->data['data'][$i]);
-                $this->data['data'] = array_values($this->data['data']);
-            }
-        }
-        $this->data['data'][] = $data;
-
-        return $this;
-    }
-
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function removeData($name)
-    {
-        if (!array_key_exists('data', $this->data)) {
-            return false;
-        }
-
-        $found = false;
-
-        for ($i = 0; $i < count($this->data['data']); ++$i) {
-
-            if ($name === $this->data['data'][$i]->name) {
-                unset($this->data['data'][$i]);
-                $this->data['data'] = array_values($this->data['data']);
-                $found = true;
-            }
-        }
-
-        if (!count($this->data['data'])) {
-            unset($this->data['data']);
-        }
-
-        return $found;
+        return json_encode($this);
     }
 }

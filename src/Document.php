@@ -2,19 +2,36 @@
 
 namespace PhpCollectionJson;
 
-class Document extends CollectionJsonObject
+use PhpCollectionJson\Groups\QueryGroup;
+
+class Document implements \JsonSerializable
 {
+    private $collection;
+    private $error;
+    private $template;
+    private $queries;
+
+    public function __construct()
+    {
+        $this->collection = null;
+        $this->error = null;
+        $this->template = null;
+        $this->queries = new QueryGroup();
+    }
     /**
      * @param Collection $collection
      */
     public function setCollection(Collection $collection)
     {
-        $this->data = ['collection' => $collection];
+        $this->collection = $collection;
     }
 
-    public function unsetCollection()
+    /**
+     *
+     */
+    public function removeCollection()
     {
-        unset($this->data['collection']);
+        $this->collection = null;
     }
 
     /**
@@ -22,12 +39,15 @@ class Document extends CollectionJsonObject
      */
     public function setError(Error $error)
     {
-        $this->data = ['error' => $error];
+        $this->error = $error;
     }
 
-    public function unsetError()
+    /**
+     *
+     */
+    public function removeError()
     {
-        unset($this->data['error']);
+        $this->error = null;
     }
 
     /**
@@ -35,59 +55,50 @@ class Document extends CollectionJsonObject
      */
     public function setTemplate(Template $template)
     {
-        $this->data = ['template' => $template];
-    }
-
-    public function unsetTemplate()
-    {
-        unset($this->data['template']);
+        $this->template = $template;
     }
 
     /**
-     * @param Query $query
-     * @return $this
-     * @throws DuplicateObjectException
+     *
      */
-    public function addQuery(Query $query)
+    public function removeTemplate()
     {
-        if (!array_key_exists('queries', $this->data)) {
-            $this->data['queries'] = [];
-        }
-
-        if (!in_array($query, $this->data['queries'])) {
-            $this->data['queries'][] = $query;
-        } else {
-            throw new DuplicateObjectException('Attempted to add duplicate Query to Document');
-        }
-
-        return $this;
+        $this->template = null;
     }
 
     /**
-     * @param Query $query
-     * @return bool
+     * @return QueryGroup
      */
-    public function removeQuery(Query $query)
+    public function getQueries()
     {
-        if (!array_key_exists('queries', $this->data)) {
-            return false;
+        return $this->queries;
+    }
+
+    public function jsonSerialize()
+    {
+        $object = new \stdClass();
+
+        if (!is_null($this->collection)) {
+            $object->collection = $this->collection;
         }
 
-        $found = false;
-
-        for ($i = 0; $i < count($this->data['queries']); ++$i) {
-
-            if ($query == $this->data['queries'][$i]) {
-                unset($this->data['queries'][$i]);
-                $this->data['queries'] = array_values($this->data['queries']);
-                $found = true;
-            }
+        if (!is_null($this->error)) {
+            $object->error = $this->error;
         }
 
-        if (!count($this->data['queries'])) {
-            unset($this->data['queries']);
+        if (!is_null($this->template)) {
+            $object->template = $this->template;
         }
 
-        return $found;
+        if ($this->queries->count() > 0) {
+            $object->queries = $this->queries;
+        }
+
+        return $object;
+    }
+
+    public function __toString()
+    {
+        return json_encode($this);
     }
 }

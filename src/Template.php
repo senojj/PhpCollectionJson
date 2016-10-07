@@ -2,93 +2,80 @@
 
 namespace PhpCollectionJson;
 
-class Template extends CollectionJsonObject
+use PhpCollectionJson\Groups\DataGroup;
+
+class Template implements \JsonSerializable
 {
+    private $data;
+
     public function __construct()
     {
-        parent::__construct(
-            'data'
-        );
+        $this->data = new DataGroup();
     }
 
     /**
-     * @param $obj
-     * @return \stdClass
+     * @return DataGroup
      */
-    public static function process($obj)
+    public function getData()
     {
-        if (!isset($obj->template)) {
-            throw new \InvalidArgumentException('Object does not contain a template');
-        }
-        $template = $obj->template;
+        return $this->data;
+    }
 
-        if (!isset($template->data)) {
+    /**
+     * @param array $array
+     * @return Template
+     */
+    public static function fromArray(array $array)
+    {
+        $template = new self();
+
+        if (array_key_exists('template', $array)) {
+            $array = $array['template'];
+        }
+
+        if (!array_key_exists('data', $array)) {
             throw new \InvalidArgumentException('Template does not contain any data');
         }
-        $obj = new \stdClass();
 
-        foreach ($template->data as $data) {
+        foreach ($array['data'] as $dataArray) {
 
-            if (!isset($data->name)) {
-                throw new \InvalidArgumentException('Template Data object does not contain a name property');
+            if (!array_key_exists('name', $dataArray)) {
+                throw new \InvalidArgumentException('Template data object does not contain a name property');
             }
+            $name = $dataArray['name'];
+            $value = null;
 
-            if (!isset($data->value)) {
-                $data->value = null;
+            if (array_key_exists('value', $dataArray)) {
+                $value = $dataArray['value'];
             }
-            $obj->{$data->name} = $data->value;
+            $data = new Data($name, $value);
+            $template->getData()->add($data);
         }
 
-        return $obj;
+        return $template;
     }
 
     /**
-     * @param Data $data
-     * @return $this
+     * @param string $json
+     * @return Template
      */
-    public function addData(Data $data)
+    public static function fromJSON($json)
     {
-        if (!array_key_exists('data', $this->data)) {
-            $this->data['data'] = [];
-        }
+        $array = json_decode($json, true);
 
-        for ($i = 0; $i < count($this->data['data']); ++$i) {
-            
-            if ($this->data['data'][$i]->name === $data->name) {
-                unset($this->data['data'][$i]);
-                $this->data['data'] = array_values($this->data['data']);
-            }
-        }
-        $this->data['data'][] = $data;
-
-        return $this;
+        return self::fromArray($array);
     }
 
-    /**
-     * @param $name
-     * @return bool
-     */
-    public function removeData($name)
+    public function jsonSerialize()
     {
-        if (!array_key_exists('data', $this->data)) {
-            return false;
-        }
+        $object = new \stdClass();
+        $object->data = $this->data;
 
-        $found = false;
+        return $object;
+    }
 
-        for ($i = 0; $i < count($this->data['data']); ++$i) {
-
-            if ($name === $this->data['data'][$i]->name) {
-                unset($this->data['data'][$i]);
-                $this->data['data'] = array_values($this->data['data']);
-                $found = true;
-            }
-        }
-
-        if (!count($this->data['data'])) {
-            unset($this->data['data']);
-        }
-
-        return $found;
+    public function __toString()
+    {
+        return json_encode($this);
     }
 }

@@ -2,143 +2,83 @@
 
 namespace PhpCollectionJson;
 
-class Collection extends CollectionJsonObject
+use PhpCollectionJson\Groups\ItemGroup;
+use PhpCollectionJson\Groups\LinkGroup;
+use PhpCollectionJson\Groups\QueryGroup;
+
+class Collection implements \JsonSerializable
 {
+    private $version;
+    private $href;
+    private $links;
+    private $items;
+    private $queries;
+    private $template;
+    private $error;
+    private $paging;
+
     /**
      * Collection constructor.
-     * @param $href
+     * @param string $href
      */
     public function __construct($href)
     {
-        parent::__construct(
-            'version',
-            'href',
-            'links',
-            'items',
-            'queries',
-            'template',
-            'error',
-            'paging'
-        );
         $this->version = '1.0';
         $this->href = $href;
-        $this->data['items'] = [];
+        $this->links = new LinkGroup();
+        $this->items = new ItemGroup();
+        $this->queries = new QueryGroup();
+        $this->template = null;
+        $this->error = null;
+        $this->paging = null;
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @return string
      */
-    public function __set($name, $value)
+    public function getVersion()
     {
-        $this->verifyProperty($name);
-
-        switch ($name) {
-            case 'version':
-                $this->data[$name] = $value;
-                break;
-            case 'href':
-                $this->data[$name] = $value;
-                break;
-            default:
-                break;
-        }
+        return $this->version;
     }
 
     /**
-     * @param Link $link
-     * @return $this
-     * @throws DuplicateObjectException
+     * @param string $version
      */
-    public function addLink(Link $link)
+    public function setVersion($version)
     {
-        if (!array_key_exists('links', $this->data)) {
-            $this->data['links'] = [];
-        }
-
-        if (!in_array($link, $this->data['links'])) {
-            $this->data['links'][] = $link;
-        } else {
-            throw new DuplicateObjectException('Attempted to add duplicate Link to Collection');
-        }
-
-        return $this;
+        $this->version = $version;
     }
 
     /**
-     * @param Link $link
-     * @return bool
+     * @return string
      */
-    public function removeLink(Link $link)
+    public function getHref()
     {
-        if (!array_key_exists('links', $this->data)) {
-            return false;
-        }
-
-        $found = false;
-
-        for ($i = 0; $i < count($this->data['links']); ++$i) {
-
-            if ($link == $this->data['links'][$i]) {
-                unset($this->data['links'][$i]);
-                $this->data['links'] = array_values($this->data['links']);
-                $found = true;
-            }
-        }
-
-        if (!count($this->data['links'])) {
-            unset($this->data['links']);
-        }
-
-        return $found;
+        return $this->href;
     }
 
     /**
-     * @param Item $item
-     * @return $this
-     * @throws DuplicateObjectException
+     * @param string $href
      */
-    public function addItem(Item $item)
+    public function setHref($href)
     {
-        if (!array_key_exists('items', $this->data)) {
-            $this->data['items'] = [];
-        }
-
-        if (!in_array($item, $this->data['items'])) {
-            $this->data['items'][] = $item;
-        } else {
-            throw new DuplicateObjectException('Attempted to add duplicate Item to Collection');
-        }
-
-        return $this;
+        $this->href = $href;
     }
 
     /**
-     * @param Item $item
-     * @return bool
+     * @return LinkGroup
      */
-    public function removeItem(Item $item)
+    public function getLinks()
     {
-        if (!array_key_exists('items', $this->data)) {
-            return false;
-        }
+        return $this->links;
+    }
 
-        $found = true;
-
-        for ($i = 0; $i < count($this->data['items']); ++$i) {
-
-            if ($item == $this->data['items'][$i]) {
-                unset($this->data['items'][$i]);
-                $this->data['items'] = array_values($this->data['items']);
-                $found = true;
-            }
-        }
-
-        if (!count($this->data['items'])) {
-            unset($this->data['items']);
-        }
-
-        return $found;
+    /**
+     * @return ItemGroup
+     */
+    public function getItems()
+    {
+        return $this->items;
     }
 
     /**
@@ -146,12 +86,15 @@ class Collection extends CollectionJsonObject
      */
     public function setError(Error $error)
     {
-        $this->data['error'] = $error;
+        $this->error = $error;
     }
 
-    public function unsetError()
+    /**
+     *
+     */
+    public function removeError()
     {
-        unset($this->data['error']);
+        $this->error = null;
     }
 
     /**
@@ -159,60 +102,23 @@ class Collection extends CollectionJsonObject
      */
     public function setTemplate(Template $template)
     {
-        $this->data['template'] = $template;
-    }
-
-    public function unsetTemplate()
-    {
-        unset($this->data['template']);
+        $this->template = $template;
     }
 
     /**
-     * @param Query $query
-     * @return $this
-     * @throws DuplicateObjectException
+     *
      */
-    public function addQuery(Query $query)
+    public function removeTemplate()
     {
-        if (!array_key_exists('queries', $this->data)) {
-            $this->data['queries'] = [];
-        }
-
-        if (!in_array($query, $this->data['queries'])) {
-            $this->data['queries'][] = $query;
-        } else {
-            throw new DuplicateObjectException('Attempted to add duplicate Query to Document');
-        }
-
-        return $this;
+        $this->template = null;
     }
 
     /**
-     * @param Query $query
-     * @return bool
+     * @return QueryGroup
      */
-    public function removeQuery(Query $query)
+    public function getQueries()
     {
-        if (!array_key_exists('queries', $this->data)) {
-            return false;
-        }
-
-        $found = false;
-
-        for ($i = 0; $i < count($this->data['queries']); ++$i) {
-
-            if ($query == $this->data['queries'][$i]) {
-                unset($this->data['queries'][$i]);
-                $this->data['queries'] = array_values($this->data['queries']);
-                $found = true;
-            }
-        }
-
-        if (!count($this->data['queries'])) {
-            unset($this->data['queries']);
-        }
-
-        return $found;
+        return $this->queries;
     }
 
     /**
@@ -220,11 +126,52 @@ class Collection extends CollectionJsonObject
      */
     public function setPaging(Paging $paging)
     {
-        $this->data['paging'] = $paging;
+        $this->paging = $paging;
     }
 
-    public function unsetPaging()
+    /**
+     *
+     */
+    public function removePaging()
     {
-        unset($this->data['paging']);
+        $this->paging = null;
+    }
+
+    public function jsonSerialize()
+    {
+        $object = new \stdClass();
+        $object->version = $this->version;
+        $object->href = $this->href;
+
+        if ($this->links->count() > 0) {
+            $object->links = $this->links;
+        }
+
+        if ($this->items->count() > 0) {
+            $object->items = $this->items;
+        }
+
+        if ($this->queries->count() > 0) {
+            $object->queries = $this->queries;
+        }
+
+        if (!is_null($this->template)) {
+            $object->template = $this->template;
+        }
+
+        if (!is_null($this->error)) {
+            $object->error = $this->error;
+        }
+
+        if (!is_null($this->paging)) {
+            $object->paging = $this->paging;
+        }
+
+        return $object;
+    }
+
+    public function __toString()
+    {
+        return json_encode($this);
     }
 }
