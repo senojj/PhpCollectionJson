@@ -6,6 +6,6 @@ class MissingArgumentException extends FromArrayCompilationException
 {
     public function __construct($key)
     {
-        parent::__construct($key, 'is missing');
+        parent::__construct($key, ' is missing');
     }
 }
