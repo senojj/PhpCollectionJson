@@ -65,7 +65,7 @@ $json = file_get_contents('http://www.somesite.com/users'); // don't do this at 
 
 $document = Document::fromJSON($json);
 
-$firstName = $document->getCollection()->getItems()->elementAt(0)->getData()->elementAt(0);
+$firstName = $document->getCollection()->getItems()->elementAt(0)->getData()->elementAt(0)->getValue();
 
 // $firstName === 'John'
 ```
