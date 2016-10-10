@@ -20,12 +20,21 @@ class Document implements \JsonSerializable
         $this->template = null;
         $this->queries = new QueryGroup();
     }
+
     /**
      * @param Collection $collection
      */
     public function setCollection(Collection $collection)
     {
         $this->collection = $collection;
+    }
+
+    /**
+     * @return Collection|null
+     */
+    public function getCollection()
+    {
+        return $this->collection;
     }
 
     /**
@@ -45,6 +54,14 @@ class Document implements \JsonSerializable
     }
 
     /**
+     * @return Error|null
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
      *
      */
     public function removeError()
@@ -58,6 +75,14 @@ class Document implements \JsonSerializable
     public function setTemplate(Template $template)
     {
         $this->template = $template;
+    }
+
+    /**
+     * @return Template|null
+     */
+    public function getTemplate()
+    {
+        return $this->template;
     }
 
     /**
