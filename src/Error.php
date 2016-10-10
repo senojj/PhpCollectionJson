@@ -77,12 +77,12 @@ class Error implements \JsonSerializable
             $object->title = $this->title;
         }
 
-        if (strlen(trim($this->code)) > 0) {
-            $object->code = $this->code;
-        }
-
         if (strlen(trim($this->message)) > 0) {
             $object->message = $this->message;
+        }
+
+        if (strlen(trim($this->code)) > 0) {
+            $object->code = $this->code;
         }
 
         return $object;
@@ -91,5 +91,30 @@ class Error implements \JsonSerializable
     public function __toString()
     {
         return json_encode($this);
+    }
+
+    /**
+     * @param array $array
+     * @return Error
+     */
+    public static function fromArray(array $array)
+    {
+        $message = '';
+        $code = '';
+        $title = '';
+
+        if (array_key_exists('message', $array)) {
+            $message = $array['message'];
+        }
+
+        if (array_key_exists('code', $array)) {
+            $code = $array['code'];
+        }
+
+        if (array_key_exists('title', $array)) {
+            $title = $array['title'];
+        }
+
+        return new self($message, $code, $title);
     }
 }

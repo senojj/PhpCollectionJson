@@ -2,6 +2,9 @@
 
 namespace PhpCollectionJson;
 
+use PhpCollectionJson\Exceptions\ExpectedArrayException;
+use PhpCollectionJson\Exceptions\FromArrayCompilationException;
+use PhpCollectionJson\Exceptions\MissingArgumentException;
 use PhpCollectionJson\Groups\DataGroup;
 
 class Query implements \JsonSerializable
@@ -124,5 +127,66 @@ class Query implements \JsonSerializable
     public function __toString()
     {
         return json_encode($this);
+    }
+
+    /**
+     * @param array $array
+     * @return Query
+     * @throws FromArrayCompilationException
+     */
+    public static function fromArray(array $array)
+    {
+        $href = null;
+        $rel = null;
+        $name = '';
+        $prompt = '';
+
+        if (array_key_exists('href', $array)) {
+            $href = $array['href'];
+        } else {
+            throw new MissingArgumentException('href');
+        }
+
+        if (array_key_exists('rel', $array)) {
+            $rel = $array['rel'];
+        } else {
+            throw new MissingArgumentException('rel');
+        }
+
+        if (array_key_exists('name', $array)) {
+            $name = $array['name'];
+        }
+
+        if (array_key_exists('prompt', $array)) {
+            $prompt = $array['prompt'];
+        }
+        $query = new self($href, $rel, $name, $prompt);
+
+        if (array_key_exists('data', $array)) {
+
+            if (!is_array($array['data'])) {
+                throw new ExpectedArrayException('data', gettype($array['data']));
+            }
+
+            try {
+
+                foreach ($array['data'] as $key => $dataArray) {
+
+                    if (!is_array($dataArray)) {
+                        throw new ExpectedArrayException($key, gettype($dataArray));
+                    }
+
+                    try {
+                        $query->getData()->add(Data::fromArray($dataArray));
+                    } catch (FromArrayCompilationException $e) {
+                        throw new FromArrayCompilationException($key, $e->getMessage());
+                    }
+                }
+            } catch (FromArrayCompilationException $e) {
+                throw new FromArrayCompilationException('data', $e->getMessage());
+            }
+        }
+
+        return $query;
     }
 }

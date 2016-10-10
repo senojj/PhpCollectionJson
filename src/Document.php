@@ -2,6 +2,8 @@
 
 namespace PhpCollectionJson;
 
+use PhpCollectionJson\Exceptions\ExpectedArrayException;
+use PhpCollectionJson\Exceptions\FromArrayCompilationException;
 use PhpCollectionJson\Groups\QueryGroup;
 
 class Document implements \JsonSerializable
@@ -100,5 +102,92 @@ class Document implements \JsonSerializable
     public function __toString()
     {
         return json_encode($this);
+    }
+
+    /**
+     * @param array $array
+     * @return Document
+     * @throws FromArrayCompilationException
+     */
+    public static function fromArray(array $array)
+    {
+        $document = new self();
+
+        if (array_key_exists('collection', $array)) {
+
+            if (!is_array($array['collection'])) {
+                throw new ExpectedArrayException('collection', gettype($array['collection']));
+            }
+
+            try {
+                $document->setCollection(Collection::fromArray($array['collection']));
+            } catch (FromArrayCompilationException $e) {
+                throw new FromArrayCompilationException('collection', $e->getMessage());
+            }
+        }
+
+        if (array_key_exists('error', $array)) {
+
+            if (!is_array($array['error'])) {
+                throw new ExpectedArrayException('error', gettype($array['error']));
+            }
+
+            try {
+                $document->setError(Error::fromArray($array['error']));
+            } catch (FromArrayCompilationException $e) {
+                throw new FromArrayCompilationException('error', $e->getMessage());
+            }
+        }
+
+        if (array_key_exists('template', $array)) {
+
+            if (!is_array($array['template'])) {
+                throw new ExpectedArrayException('template', gettype($array['template']));
+            }
+
+            try {
+                $document->setTemplate(Template::fromArray($array['template']));
+            } catch (FromArrayCompilationException $e) {
+                throw new FromArrayCompilationException('template', $e->getMessage());
+            }
+        }
+
+        if (array_key_exists('queries', $array)) {
+
+            if (!is_array($array['queries'])) {
+                throw new ExpectedArrayException('queries', gettype($array['queries']));
+            }
+
+            try {
+
+                foreach ($array['queries'] as $key => $queryArray) {
+
+                    if (!is_array($queryArray)) {
+                        throw new ExpectedArrayException($key, gettype($queryArray));
+                    }
+
+                    try {
+                        $document->getQueries()->add(Query::fromArray($queryArray));
+                    } catch (FromArrayCompilationException $e) {
+                        throw new FromArrayCompilationException($key, $e->getMessage());
+                    }
+                }
+            } catch (FromArrayCompilationException $e) {
+                throw new FromArrayCompilationException('queries', $e->getMessage());
+            }
+        }
+
+        return $document;
+    }
+
+    /**
+     * @param string $json
+     * @return Document
+     */
+    public static function fromJSON($json)
+    {
+        $array = json_decode($json, true);
+
+        return self::fromArray($array);
     }
 }

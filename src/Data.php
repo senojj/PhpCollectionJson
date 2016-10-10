@@ -2,6 +2,9 @@
 
 namespace PhpCollectionJson;
 
+use PhpCollectionJson\Exceptions\FromArrayCompilationException;
+use PhpCollectionJson\Exceptions\MissingArgumentException;
+
 class Data implements \JsonSerializable
 {
     private $name;
@@ -85,5 +88,24 @@ class Data implements \JsonSerializable
     public function __toString()
     {
         return json_encode($this);
+    }
+
+    /**
+     * @param array $array
+     * @return Data
+     * @throws FromArrayCompilationException
+     */
+    public static function fromArray(array $array)
+    {
+        if (!array_key_exists('name', $array)) {
+            throw new MissingArgumentException('name');
+        }
+        $name = $array['name'];
+        $value = null;
+
+        if (array_key_exists('value', $array)) {
+            $value = $array['value'];
+        }
+        return new self($name, $value);
     }
 }

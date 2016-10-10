@@ -2,6 +2,9 @@
 
 namespace PhpCollectionJson;
 
+use PhpCollectionJson\Exceptions\ExpectedArrayException;
+use PhpCollectionJson\Exceptions\FromArrayCompilationException;
+use PhpCollectionJson\Exceptions\MissingArgumentException;
 use PhpCollectionJson\Groups\DataGroup;
 use PhpCollectionJson\Groups\LinkGroup;
 
@@ -73,5 +76,74 @@ class Item implements \JsonSerializable
     public function __toString()
     {
         return json_encode($this);
+    }
+
+    /**
+     * @param array $array
+     * @return Item
+     * @throws FromArrayCompilationException
+     */
+    public static function fromArray(array $array)
+    {
+        $href = null;
+
+        if (array_key_exists('href', $array)) {
+            $href = $array['href'];
+        } else {
+            throw new MissingArgumentException('href');
+        }
+        $item = new self($href);
+
+        if (array_key_exists('data', $array)) {
+
+            if (!is_array($array['data'])) {
+                throw new ExpectedArrayException('data', gettype($array['data']));
+            }
+
+            try {
+
+                foreach ($array['data'] as $key => $dataArray) {
+
+                    if (!is_array($dataArray)) {
+                        throw new ExpectedArrayException($key, gettype($dataArray));
+                    }
+
+                    try {
+                        $item->getData()->add(Data::fromArray($dataArray));
+                    } catch (FromArrayCompilationException $e) {
+                        throw new FromArrayCompilationException($key, $e->getMessage());
+                    }
+                }
+            } catch (FromArrayCompilationException $e) {
+                throw new FromArrayCompilationException('data', $e->getMessage());
+            }
+        }
+
+        if (array_key_exists('links', $array)) {
+
+            if (!is_array($array['links'])) {
+                throw new ExpectedArrayException('links', gettype($array['links']));
+            }
+
+            try {
+
+                foreach ($array['links'] as $key => $linkArray) {
+
+                    if (!is_array($linkArray)) {
+                        throw new ExpectedArrayException($key, gettype($linkArray));
+                    }
+
+                    try {
+                        $item->getLinks()->add(Link::fromArray($linkArray));
+                    } catch (FromArrayCompilationException $e) {
+                        throw new FromArrayCompilationException($key, $e->getMessage());
+                    }
+                }
+            } catch (FromArrayCompilationException $e) {
+                throw new FromArrayCompilationException('links', $e->getMessage());
+            }
+        }
+
+        return $item;
     }
 }

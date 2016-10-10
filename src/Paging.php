@@ -2,6 +2,9 @@
 
 namespace PhpCollectionJson;
 
+use PhpCollectionJson\Exceptions\FromArrayCompilationException;
+use PhpCollectionJson\Exceptions\MissingArgumentException;
+
 class Paging implements \JsonSerializable
 {
     private $totalItems;
@@ -82,5 +85,37 @@ class Paging implements \JsonSerializable
     public function __toString()
     {
         return json_encode($this);
+    }
+
+    /**
+     * @param array $array
+     * @return Paging
+     * @throws FromArrayCompilationException
+     */
+    public static function fromArray(array $array)
+    {
+        $totalItems = null;
+        $totalPages = null;
+        $page = null;
+
+        if (array_key_exists('totalItems', $array)) {
+            $totalItems = $array['totalItems'];
+        } else {
+            throw new MissingArgumentException('totalItems');
+        }
+
+        if (array_key_exists('totalPages', $array)) {
+            $totalPages = $array['totalPages'];
+        } else {
+            throw new MissingArgumentException('totalPages');
+        }
+
+        if (array_key_exists('page', $array)) {
+            $page = $array['page'];
+        } else {
+            throw new MissingArgumentException('page');
+        }
+
+        return new self($totalItems, $totalPages, $page);
     }
 }

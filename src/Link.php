@@ -2,6 +2,9 @@
 
 namespace PhpCollectionJson;
 
+use PhpCollectionJson\Exceptions\FromArrayCompilationException;
+use PhpCollectionJson\Exceptions\MissingArgumentException;
+
 class Link implements \JsonSerializable
 {
     private $href;
@@ -126,5 +129,45 @@ class Link implements \JsonSerializable
         }
 
         return $object;
+    }
+
+    /**
+     * @param array $array
+     * @return Link
+     * @throws FromArrayCompilationException
+     */
+    public static function fromArray(array $array)
+    {
+        $href = null;
+        $rel = null;
+        $name = '';
+        $prompt = '';
+        $render = '';
+
+        if (array_key_exists('href', $array)) {
+            $href = $array['href'];
+        } else {
+            throw new MissingArgumentException('href');
+        }
+
+        if (array_key_exists('rel', $array)) {
+            $rel = $array['rel'];
+        } else {
+            throw new MissingArgumentException('rel');
+        }
+
+        if (array_key_exists('name', $array)) {
+            $name = $array['name'];
+        }
+
+        if (array_key_exists('prompt', $array)) {
+            $prompt = $array['prompt'];
+        }
+
+        if (array_key_exists('render', $array)) {
+            $render = $array['render'];
+        }
+
+        return new self($href, $rel, $name, $prompt, $render);
     }
 }
