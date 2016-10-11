@@ -92,20 +92,29 @@ class Data implements \JsonSerializable
 
     /**
      * @param array $array
+     * @param bool $strict
      * @return Data
      * @throws FromArrayCompilationException
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array, $strict = true)
     {
-        if (!array_key_exists('name', $array)) {
+        $name = '';
+        $value = '';
+        $prompt = '';
+
+        if (array_key_exists('name', $array)) {
+            $name = $array['name'];
+        } elseif ($strict) {
             throw new MissingArgumentException('name');
         }
-        $name = $array['name'];
-        $value = null;
 
         if (array_key_exists('value', $array)) {
             $value = $array['value'];
         }
-        return new self($name, $value);
+
+        if (array_key_exists('prompt', $array)) {
+            $prompt = $array['prompt'];
+        }
+        return new self($name, $value, $prompt);
     }
 }

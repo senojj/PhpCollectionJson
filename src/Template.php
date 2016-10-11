@@ -39,27 +39,31 @@ class Template implements \JsonSerializable
 
     /**
      * @param array $array
+     * @param bool $strict
      * @return Template
      * @throws FromArrayCompilationException
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array, $strict = true)
     {
         $template = new self();
+        $data = [];
 
-        if (!array_key_exists('data', $array)) {
+        if (array_key_exists('data', $array)) {
+            $data = $array['data'];
+        } elseif ($strict) {
             throw new MissingArgumentException('data');
         }
 
         try {
 
-            foreach ($array['data'] as $key => $dataArray) {
+            foreach ($data as $key => $dataArray) {
 
                 if (!is_array($dataArray)) {
                     throw new ExpectedArrayException($key, gettype($dataArray));
                 }
 
                 try {
-                    $template->getData()->add(Data::fromArray($dataArray));
+                    $template->getData()->add(Data::fromArray($dataArray, $strict));
                 } catch (FromArrayCompilationException $e) {
                     throw new FromArrayCompilationException($key, $e->getMessage());
                 }

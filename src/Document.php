@@ -131,10 +131,11 @@ class Document implements \JsonSerializable
 
     /**
      * @param array $array
+     * @param bool $strict
      * @return Document
      * @throws FromArrayCompilationException
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array, $strict = true)
     {
         $document = new self();
 
@@ -145,7 +146,7 @@ class Document implements \JsonSerializable
             }
 
             try {
-                $document->setCollection(Collection::fromArray($array['collection']));
+                $document->setCollection(Collection::fromArray($array['collection'], $strict));
             } catch (FromArrayCompilationException $e) {
                 throw new FromArrayCompilationException('collection', $e->getMessage());
             }
@@ -171,7 +172,7 @@ class Document implements \JsonSerializable
             }
 
             try {
-                $document->setTemplate(Template::fromArray($array['template']));
+                $document->setTemplate(Template::fromArray($array['template'], $strict));
             } catch (FromArrayCompilationException $e) {
                 throw new FromArrayCompilationException('template', $e->getMessage());
             }
@@ -192,7 +193,7 @@ class Document implements \JsonSerializable
                     }
 
                     try {
-                        $document->getQueries()->add(Query::fromArray($queryArray));
+                        $document->getQueries()->add(Query::fromArray($queryArray, $strict));
                     } catch (FromArrayCompilationException $e) {
                         throw new FromArrayCompilationException($key, $e->getMessage());
                     }
@@ -207,12 +208,13 @@ class Document implements \JsonSerializable
 
     /**
      * @param string $json
+     * @param bool $strict
      * @return Document
      */
-    public static function fromJSON($json)
+    public static function fromJSON($json, $strict = true)
     {
         $array = json_decode($json, true);
 
-        return self::fromArray($array);
+        return self::fromArray($array, $strict);
     }
 }

@@ -80,16 +80,17 @@ class Item implements \JsonSerializable
 
     /**
      * @param array $array
+     * @param bool $strict
      * @return Item
      * @throws FromArrayCompilationException
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array, $strict = true)
     {
-        $href = null;
+        $href = '';
 
         if (array_key_exists('href', $array)) {
             $href = $array['href'];
-        } else {
+        } elseif ($strict) {
             throw new MissingArgumentException('href');
         }
         $item = new self($href);
@@ -109,7 +110,7 @@ class Item implements \JsonSerializable
                     }
 
                     try {
-                        $item->getData()->add(Data::fromArray($dataArray));
+                        $item->getData()->add(Data::fromArray($dataArray, $strict));
                     } catch (FromArrayCompilationException $e) {
                         throw new FromArrayCompilationException($key, $e->getMessage());
                     }
@@ -134,7 +135,7 @@ class Item implements \JsonSerializable
                     }
 
                     try {
-                        $item->getLinks()->add(Link::fromArray($linkArray));
+                        $item->getLinks()->add(Link::fromArray($linkArray, $strict));
                     } catch (FromArrayCompilationException $e) {
                         throw new FromArrayCompilationException($key, $e->getMessage());
                     }

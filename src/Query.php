@@ -131,25 +131,26 @@ class Query implements \JsonSerializable
 
     /**
      * @param array $array
+     * @param bool $strict
      * @return Query
      * @throws FromArrayCompilationException
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array, $strict = true)
     {
-        $href = null;
-        $rel = null;
+        $href = '';
+        $rel = '';
         $name = '';
         $prompt = '';
 
         if (array_key_exists('href', $array)) {
             $href = $array['href'];
-        } else {
+        } elseif ($strict) {
             throw new MissingArgumentException('href');
         }
 
         if (array_key_exists('rel', $array)) {
             $rel = $array['rel'];
-        } else {
+        } elseif ($strict) {
             throw new MissingArgumentException('rel');
         }
 
@@ -177,7 +178,7 @@ class Query implements \JsonSerializable
                     }
 
                     try {
-                        $query->getData()->add(Data::fromArray($dataArray));
+                        $query->getData()->add(Data::fromArray($dataArray, $strict));
                     } catch (FromArrayCompilationException $e) {
                         throw new FromArrayCompilationException($key, $e->getMessage());
                     }

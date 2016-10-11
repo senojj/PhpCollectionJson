@@ -133,26 +133,27 @@ class Link implements \JsonSerializable
 
     /**
      * @param array $array
+     * @param bool $strict
      * @return Link
      * @throws FromArrayCompilationException
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array, $strict = true)
     {
-        $href = null;
-        $rel = null;
+        $href = '';
+        $rel = '';
         $name = '';
         $prompt = '';
         $render = '';
 
         if (array_key_exists('href', $array)) {
             $href = $array['href'];
-        } else {
+        } elseif ($strict) {
             throw new MissingArgumentException('href');
         }
 
         if (array_key_exists('rel', $array)) {
             $rel = $array['rel'];
-        } else {
+        } elseif ($strict) {
             throw new MissingArgumentException('rel');
         }
 

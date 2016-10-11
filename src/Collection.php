@@ -181,17 +181,18 @@ class Collection implements \JsonSerializable
 
     /**
      * @param array $array
+     * @param bool $strict
      * @return Collection
      * @throws FromArrayCompilationException
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array, $strict = true)
     {
-        $href = null;
+        $href = '';
         $version = '1.0';
 
         if (array_key_exists('href', $array)) {
             $href = $array['href'];
-        } else {
+        } elseif ($strict) {
             throw new MissingArgumentException('href');
         }
 
@@ -215,7 +216,7 @@ class Collection implements \JsonSerializable
                     }
 
                     try {
-                        $collection->getLinks()->add(Link::fromArray($linkArray));
+                        $collection->getLinks()->add(Link::fromArray($linkArray, $strict));
                     } catch (FromArrayCompilationException $e) {
                         throw new FromArrayCompilationException($key, $e->getMessage());
                     }
@@ -240,7 +241,7 @@ class Collection implements \JsonSerializable
                     }
 
                     try {
-                        $collection->getItems()->add(Item::fromArray($itemArray));
+                        $collection->getItems()->add(Item::fromArray($itemArray, $strict));
                     } catch (FromArrayCompilationException $e) {
                         throw new FromArrayCompilationException($key, $e->getMessage());
                     }
@@ -265,7 +266,7 @@ class Collection implements \JsonSerializable
                     }
 
                     try {
-                        $collection->getQueries()->add(Query::fromArray($queryArray));
+                        $collection->getQueries()->add(Query::fromArray($queryArray, $strict));
                     } catch (FromArrayCompilationException $e) {
                         throw new FromArrayCompilationException($key, $e->getMessage());
                     }
@@ -282,7 +283,7 @@ class Collection implements \JsonSerializable
             }
 
             try {
-                $collection->setTemplate(Template::fromArray($array['template']));
+                $collection->setTemplate(Template::fromArray($array['template'], $strict));
             } catch (FromArrayCompilationException $e) {
                 throw new FromArrayCompilationException('template', $e->getMessage());
             }
@@ -308,7 +309,7 @@ class Collection implements \JsonSerializable
             }
 
             try {
-                $collection->setPaging(Paging::fromArray($array['paging']));
+                $collection->setPaging(Paging::fromArray($array['paging'], $strict));
             } catch (FromArrayCompilationException $e) {
                 throw new FromArrayCompilationException('paging', $e->getMessage());
             }

@@ -89,30 +89,31 @@ class Paging implements \JsonSerializable
 
     /**
      * @param array $array
+     * @param bool $strict
      * @return Paging
      * @throws FromArrayCompilationException
      */
-    public static function fromArray(array $array)
+    public static function fromArray(array $array, $strict = true)
     {
-        $totalItems = null;
-        $totalPages = null;
-        $page = null;
+        $totalItems = 0;
+        $totalPages = 0;
+        $page = 0;
 
         if (array_key_exists('totalItems', $array)) {
             $totalItems = $array['totalItems'];
-        } else {
+        } elseif ($strict) {
             throw new MissingArgumentException('totalItems');
         }
 
         if (array_key_exists('totalPages', $array)) {
             $totalPages = $array['totalPages'];
-        } else {
+        } elseif ($strict) {
             throw new MissingArgumentException('totalPages');
         }
 
         if (array_key_exists('page', $array)) {
             $page = $array['page'];
-        } else {
+        } elseif ($strict) {
             throw new MissingArgumentException('page');
         }
 
